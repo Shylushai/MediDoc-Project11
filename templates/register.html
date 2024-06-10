@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Register</h2>
+        <form method="POST">
+            <label for="username">Username</label>
+            <input type="text" name="username" required>
+
+            <label for="password">Password</label>
+            <input type="password" name="password" required>
+
+            <label for="role">Role</label>
+            <select name="role" required>
+                <option value="patient">Patient</option>
+                <option value="doctor">Doctor</option>
+                <option value="receptionist">Receptionist</option>
+                <option value="admin">Admin</option>
+            </select>
+
+            <!-- Additional fields for patients -->
+            <div id="patient-info">
+                <label for="name">Name</label>
+                <input type="text" name="name">
+
+                <label for="dob">Date of Birth</label>
+                <input type="date" name="dob">
+
+                <label for="age">Age</label>
+                <input type="number" name="age">
+
+                <label for="gender">Gender</label>
+                <select name="gender">
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+
+                <label for="contact">Contact</label>
+                <input type="text" name="contact">
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+        <p>Already have an account? <a href="{{ url_for('login') }}">Log in</a></p>
+    </div>
+
+    <script>
+        document.querySelector('select[name="role"]').addEventListener('change', function () {
+            if (this.value === 'patient') {
+                document.getElementById('patient-info').style.display = 'block';
+            } else {
+                document.getElementById('patient-info').style.display = 'none';
+            }
+        });
+        document.querySelector('select[name="role"]').dispatchEvent(new Event('change'));
+    </script>
+</body>
+</html>

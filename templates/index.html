@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MediDoc</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="title">
+                <h1>MediDoc</h1>
+            </div>
+            <div class="user-info">
+                <span>Logged in as: {{ current_user.username }} ({{ current_user.role.capitalize() }})</span>
+                <a href="{{ url_for('logout') }}" class="button">Logout</a>
+            </div>
+        </div>
+        <nav class="navigation">
+            <ul>
+                {% if current_user.role == 'admin' %}
+                    <li><a href="{{ url_for('admin_setup') }}">Admin Setup</a></li>
+                    <li><a href="{{ url_for('user_management') }}">User Management</a></li>
+                {% elif current_user.role == 'patient' %}
+                    <li><a href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                    <li><a href="{{ url_for('update_patient') }}">Update Information</a></li>
+                {% elif current_user.role == 'receptionist' %}
+                    <li><a href="{{ url_for('receptionist_book_appointment') }}">Book Appointment</a></li>
+                    <li><a href="{{ url_for('search_patient') }}">Search Patient</a></li>
+                {% endif %}
+                {% if current_user.role == 'doctor' %}
+                    <a href="{{ url_for('doctor_patient_search') }}" class="button">Patient Search</a>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="alert">
+                    {% for category, message in messages %}
+                        <p class="{{ category }}">{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        {% if current_user.role == 'admin' %}
+            <h2>Patients</h2>
+            <ul>
+                {% for patient in patients %}
+                    <li>
+                        {{ patient.name }} (DOB: {{ patient.dob }}, {{ patient.age }} years old, {{ patient.gender }}) - {{ patient.contact }}
+                        <div class="button-group">
+                            <form action="{{ url_for('delete_patient', patient_id=patient.id) }}" method="post">
+                                <button type="submit" class="button delete">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <h2>Doctors</h2>
+        <ul>
+            {% for doctor in doctors %}
+                <li>
+                    {{ doctor.name }} ({{ doctor.specialty }}) - {{ doctor.contact }}
+                    {% if current_user.role == 'admin' %}
+                        <div class="button-group">
+                            <form action="{{ url_for('delete_doctor', doctor_id=doctor.id) }}" method="post">
+                                <button type="submit" class="button delete">Delete</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Appointments</h2>
+        <ul>
+            {% for appointment in appointments %}
+                <li>
+                    <div>
+                        <strong>Patient:</strong> {{ appointment.patient_name }}<br>
+                        <strong>Contact:</strong> {{ appointment.patient_contact }}<br>
+                        <strong>Date:</strong> {{ appointment.date }}<br>
+                        <strong>Time:</strong> {{ appointment.time }}<br>
+                        <strong>Reason:</strong> {{ appointment.reason }}<br>
+                        <strong>Status:</strong> {{ appointment.status }}<br>
+                    </div>
+                    {% if current_user.role == 'admin' or current_user.role == 'doctor' %}
+                        <div class="button-group">
+                            {% if current_user.role == 'admin' %}
+                                <form action="{{ url_for('manage_appointments') }}" method="post">
+                                    <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                                    <button type="submit" name="action" value="confirm" class="button">Confirm</button>
+                                    <button type="submit" name="action" value="decline" class="button">Decline</button>
+                                </form>
+                                <form action="{{ url_for('delete_appointment', appointment_id=appointment.id) }}" method="post">
+                                    <button type="submit" class="button delete">Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
