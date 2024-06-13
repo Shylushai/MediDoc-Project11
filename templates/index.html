@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>MediDoc</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    .hidden {
+      display: none;
+    }
+
+    .notification-container {
+      position: relative;
+      display: inline-block;
+      margin-left: 20px;
+    }
+
+    .notification-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      padding: 0.25em 0.5em;
+      font-size: 0.6em;
+      font-weight: bold;
+    }
+
+    .reminder-details-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 1em;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      max-width: 300px;
+      width: 90%;
+    }
+
+    .reminder-item {
+      margin-bottom: 1em;
+    }
+  </style>
 </head>
 <body>
     <header>
@@ -16,6 +58,17 @@
                 <span>Logged in as: {{ current_user.username }} ({{ current_user.role.capitalize() }})</span>
                 <a href="{{ url_for('logout') }}" class="button">Logout</a>
             </div>
+            {% if current_user.role == 'patient' %}
+              <div class="notification-container">
+                <i class="fas fa-bell" id="notification-icon" onclick="toggleReminderDetails()"></i>
+                <span id="notification-badge" class="notification-badge hidden">0</span>
+              </div>
+              <div id="reminder-details-popup" class="reminder-details-popup hidden">
+                <div id="reminder-details-content">
+                  <!-- Reminder details will be inserted here -->
+                </div>
+              </div>
+            {% endif %}
         </div>
         <nav class="navigation">
             <ul>
@@ -23,7 +76,7 @@
                     <li><a href="{{ url_for('admin_setup') }}">Admin Setup</a></li>
                     <li><a href="{{ url_for('user_management') }}">User Management</a></li>
                 {% elif current_user.role == 'patient' %}
-                    <li><a href="{{ url_for('book_appointment') }}">Book Appointment</a></li>
+                    <li><a href="{{ url_for('receptionist_book_appointment') }}">Book Appointment</a></li>
                     <li><a href="{{ url_for('update_patient') }}">Update Information</a></li>
                 {% elif current_user.role == 'receptionist' %}
                     <li><a href="{{ url_for('receptionist_book_appointment') }}">Book Appointment</a></li>
@@ -76,6 +129,10 @@
             {% endfor %}
         </ul>
         <h2>Appointments</h2>
+        {% if current_user.role == 'patient' %}
+          {% for appointment in appointments %}
+          {% endfor %}
+        {% endif %}
         <ul>
             {% for appointment in appointments %}
                 <li>
@@ -87,6 +144,18 @@
                         <strong>Reason:</strong> {{ appointment.reason }}<br>
                         <strong>Status:</strong> {{ appointment.status }}<br>
                     </div>
+                    {% if current_user.role == 'receptionist' %}
+                    <div>
+                    <form style="float: right" action="{{ url_for('confirm_appointment') }}" method="post">
+                      <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                      <button type="submit">Confirm Appointment</button>
+                    </form>
+                    <form style="float: center" action="{{ url_for('deny_appointment') }}" method="post">
+                      <input type="hidden" name="appointment_id" value="{{ appointment.id }}">
+                      <button type="submit">Deny / delete</button>
+                    </form>
+                    </div>
+                    {% endif %}
                     {% if current_user.role == 'admin' or current_user.role == 'doctor' %}
                         <div class="button-group">
                             {% if current_user.role == 'admin' %}
@@ -106,4 +175,68 @@
         </ul>
     </div>
 </body>
+{% if current_user.role == 'patient' %}
+  <script>
+    function updateNotificationBadge(reminderCount) {
+      const notificationBadge = document.getElementById('notification-badge');
+      notificationBadge.textContent = reminderCount;
+      notificationBadge.classList.toggle('hidden', reminderCount === 0); // Hide badge if no reminders
+    }
+
+    const upcomingReminders = {{ upcoming_reminders | tojson | safe }}; // Access array directly // 10
+    const initialReminderCount = upcomingReminders.length; // 10
+    updateNotificationBadge(initialReminderCount);
+
+    function toggleReminderDetails() {
+      const detailsPopup = document.getElementById('reminder-details-popup');
+      const detailsContent = document.getElementById('reminder-details-content');
+
+      if (detailsPopup.classList.contains('hidden')) {
+        detailsContent.innerHTML = ''; // Clear existing content
+
+        if (upcomingReminders.length > 0) {
+          upcomingReminders.forEach(reminder => {
+            const reminderElement = document.createElement('div');
+            reminderElement.classList.add('reminder-item');
+            reminderElement.innerHTML = `
+              <p>Appointment Date: ${reminder.date}</p>
+              <p>Message: ${reminder.message}</p>
+            `;
+            detailsContent.appendChild(reminderElement);
+          });
+
+          // Make an API call to mark reminders as seen if there are any
+          fetch('/api/mark_reminders_seen', { // caling that function
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ patient_id: {{ current_user.id }} })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              // Reset the notification count to 0
+              updateNotificationBadge(0);
+              upcomingReminders.length = 0;
+            } else {
+              console.error('Failed to mark reminders as seen:', data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+
+        } else {
+          detailsContent.innerHTML = '<p>No upcoming reminders.</p>';
+        }
+
+        detailsPopup.classList.remove('hidden'); // Show popup
+      } else {
+        detailsPopup.classList.add('hidden'); // Hide popup
+      }
+    }
+  </script>
+
+{% endif %}
 </html>

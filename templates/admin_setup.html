@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+  {% if current_user.role == 'admin' %}
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -106,4 +107,7 @@
       </form>
     </div>
   </body>
+  {% elseif %}
+  <h1> You are not authorised to access this </h1>
+  {% endif %}
 </html>

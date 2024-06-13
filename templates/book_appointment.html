@@ -35,6 +35,7 @@
         <a href="{{ url_for('index') }}" class="button">Back to Home</a>
       </nav>
     </header>
+    {% if current_user.role == 'patient' or current_user.role == 'doctor' %}
     <div class="form-container">
       <form method="post">
         <label for="patient_name">Patient Name:</label>
@@ -78,5 +79,8 @@
         <button type="submit">Submit Request</button>
       </form>
     </div>
+    {% else %}
+    <h1> You are not authorised to access this </h1>
+    {% endif %}
   </body>
 </html>

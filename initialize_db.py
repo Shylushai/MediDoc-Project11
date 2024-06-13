@@ -1,9 +1,18 @@
 import sqlite3
 
+
 def initialize_db():
     conn = sqlite3.connect('hospital.db')
     cursor = conn.cursor()
-    
+
+    cursor.execute('DROP TABLE IF EXISTS Departments')
+    cursor.execute('DROP TABLE IF EXISTS Doctors')
+    cursor.execute('DROP TABLE IF EXISTS AvailableTimeSlots')
+    cursor.execute('DROP TABLE IF EXISTS Patients')
+    cursor.execute('DROP TABLE IF EXISTS Appointments')
+    cursor.execute('DROP TABLE IF EXISTS Users')
+    cursor.execute('DROP TABLE IF EXISTS Reminders')
+
     # Create Users table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Users (
@@ -21,6 +30,7 @@ def initialize_db():
         name TEXT NOT NULL,
         dob DATE NOT NULL,
         age INTEGER NOT NULL,
+        email TEXT NOT NULL,
         gender TEXT NOT NULL,
         contact TEXT NOT NULL
     )
@@ -32,7 +42,9 @@ def initialize_db():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         specialty TEXT NOT NULL,
-        contact TEXT NOT NULL
+        contact TEXT NOT NULL,
+        department_id INTEGER NOT NULL,
+        FOREIGN KEY(department_id) REFERENCES Departments(id)
     )
     ''')
 
@@ -78,8 +90,19 @@ def initialize_db():
     )
     ''')
 
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS Reminders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        appointment_id INTEGER NOT NULL,
+        patient_id INTEGER NOT NULL,
+        reminder_sent_at TEXT NOT NULL,
+        seen_in_ui BOOLEAN DEFAULT 0
+     )
+     ''')
+
     conn.commit()
     conn.close()
+
 
 if __name__ == "__main__":
     initialize_db()
