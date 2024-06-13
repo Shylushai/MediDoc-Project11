@@ -79,7 +79,7 @@ def fetch_query(query, args=()):
     finally:
         conn.close()
 
-
+#index route
 @app.route('/')
 @login_required
 def index():
@@ -143,7 +143,7 @@ def index():
     return render_template('index.html', patients=patients, doctors=doctors, appointments=appointments,
                            upcoming_reminders=upcoming_reminders)
 
-
+#login route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -162,14 +162,14 @@ def login():
             flash('Invalid username or password', 'error')
     return render_template('login.html')
 
-
+#logout function
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
 
-
+#register route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -196,7 +196,7 @@ def register():
             flash('Username already exists. Please choose a different one.', 'error')
     return render_template('register.html')
 
-
+#admin_setup route
 @app.route('/admin_setup', methods=['GET', 'POST'])
 @login_required
 def admin_setup():
@@ -253,34 +253,34 @@ def admin_setup():
 
     return render_template('admin_setup.html', suggested_times=suggested_times, departments=departments)
 
-
+#delete patient function
 @app.route('/delete_patient/<int:patient_id>', methods=['POST'])
 @login_required
 def delete_patient(patient_id):
     if current_user.role != 'admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
     execute_query('DELETE FROM Patients WHERE id = ?', (patient_id,))
     return redirect(url_for('index'))
 
-
+#delte doctor function
 @app.route('/delete_doctor/<int:doctor_id>', methods=['POST'])
 @login_required
 def delete_doctor(doctor_id):
     if current_user.role != 'admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
     execute_query('DELETE FROM Doctors WHERE id = ?', (doctor_id,))
     return redirect(url_for('index'))
 
-
+#delete appointment function
 @app.route('/delete_appointment/<int:appointment_id>', methods=['POST'])
 @login_required
 def delete_appointment(appointment_id):
     if current_user.role != 'admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
     execute_query('DELETE FROM Appointments WHERE id = ?', (appointment_id,))
     return redirect(url_for('index'))
 
-
+#bookappointment route
 @app.route('/book_appointment', methods=['GET', 'POST'])
 @login_required
 def book_appointment():
@@ -304,12 +304,12 @@ def book_appointment():
     return render_template('book_appointment.html', departments=departments, doctors=doctors,
                            available_slots=available_slots)
 
-
+#manage appointment route
 @app.route('/manage_appointments', methods=['POST'])
 @login_required
 def manage_appointments():
     if current_user.role != 'admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
 
     appointment_id = request.form['appointment_id']
     action = request.form['action']
@@ -321,12 +321,12 @@ def manage_appointments():
 
     return redirect(url_for('index'))
 
-
+#user mangement route
 @app.route('/user_management', methods=['GET', 'POST'])
 @login_required
 def user_management():
     if current_user.role != 'admin':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
 
     if request.method == 'POST':
         user_id = request.form['user_id']
@@ -341,12 +341,12 @@ def user_management():
 
     return render_template('user_management.html', users=users)
 
-
+#update patient function
 @app.route('/update_patient', methods=['GET', 'POST'])
 @login_required
 def update_patient():
     if current_user.role != 'patient':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
 
     if request.method == 'POST':
         name = request.form['name']
@@ -365,11 +365,13 @@ def update_patient():
 
     return render_template('update_patient.html', patient=patient)
 
-
+#book appointment route and function
 @app.route('/receptionist_book_appointment', methods=['GET', 'POST'])
 @login_required
 def receptionist_book_appointment():
-    
+    if current_user.role != 'receptionist':
+        return redirect(url_for('unorthorised'))
+
     if request.method == 'POST':
         patient_name = request.form['patient_name']
         patient = fetch_query('SELECT * FROM Patients WHERE name = ?', (patient_name,))
@@ -382,9 +384,8 @@ def receptionist_book_appointment():
         date = request.form['date']
         time = request.form['time']
         reason = request.form['reason'] if request.form['reason'] else 'No message provided'
-        execute_query(
-            'INSERT INTO Appointments (patient_id, doctor_id, date, time, reason, status) VALUES (?, ?, ?, ?, ?, ?)',
-            (patient_id, doctor_id, date, time, reason, 'Pending'))
+        execute_query('INSERT INTO Appointments (patient_id, doctor_id, date, time, reason, status) VALUES (?, ?, ?, ?, ?, ?)',
+                      (patient_id, doctor_id, date, time, reason, 'Pending'))
         flash('Appointment booked successfully', 'success')
         return redirect(url_for('index'))
 
@@ -392,12 +393,12 @@ def receptionist_book_appointment():
     available_slots = fetch_query('SELECT * FROM AvailableTimeSlots')
     return render_template('receptionist_book_appointment.html', doctors=doctors, available_slots=available_slots)
 
-
+#search patient route and function
 @app.route('/search_patient', methods=['GET', 'POST'])
 @login_required
 def search_patient():
     if current_user.role != 'receptionist':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
 
     patients = []
     if request.method == 'POST' and 'search_term' in request.form:
@@ -414,27 +415,27 @@ def search_patient():
 
     return render_template('search_patient.html', patients=patients, search_history=search_history)
 
-
+#delete history function
 @app.route('/delete_search_history/<int:history_id>', methods=['POST'])
 @login_required
 def delete_search_history(history_id):
     if current_user.role != 'receptionist':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
 
     execute_query('DELETE FROM SearchHistory WHERE id = ?', (history_id,))
     return redirect(url_for('search_patient'))
 
-
+#clear history function
 @app.route('/clear_search_history', methods=['POST'])
 @login_required
 def clear_search_history():
     if current_user.role != 'receptionist':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
 
     execute_query('DELETE FROM SearchHistory WHERE receptionist_id = ?', (current_user.id,))
     return redirect(url_for('search_patient'))
 
-
+#doctor search route
 @app.route('/doctor_patient_search', methods=['GET', 'POST'])
 @login_required
 def doctor_patient_search():
@@ -442,7 +443,7 @@ def doctor_patient_search():
     patients = fetch_query('SELECT * FROM Users WHERE role = \'patient\'')
     return render_template('Doctor_patient_search.html', users=users, patients=patients)
 
-
+#doctor search function
 @app.route('/doctor_search', methods=['GET', 'POST'])
 @login_required
 def doctor_search():
@@ -451,9 +452,11 @@ def doctor_search():
     patients = fetch_query('SELECT * FROM Users WHERE role = \'patient\' AND username LIKE ?', ('%' + name + '%',))
     return render_template('Doctor_patient_search.html', users=users, patients=patients)
 
-
+#upload route
 @app.route('/upload', methods=['POST'])
 def upload():
+    if current_user.role != 'doctor':
+        return redirect(url_for('unorthorised'))
     id = request.form['id']
     file = request.files['file']
     users = fetch_query('SELECT * FROM Users')
@@ -469,10 +472,12 @@ def upload():
         file.save(f'uploads/{id}/{file.filename}')
     return render_template('Doctor_patient_search.html', users=users, files=files, patients=patients)
 
-
+#download function
 @app.route('/download/<int:id>', methods=['GET'])
 @login_required
 def download(id):
+    if current_user.role != 'doctor':
+        return redirect(url_for('unorthorised'))
     id = id
     try:
         os.mkdir('uploads/{value}'.format(value=id))
@@ -485,18 +490,18 @@ def download(id):
 
     return render_template('download.html', users=users, files=files, id=id)
 
-
+#document download function
 @app.route('/document_download/<int:id>/<string:file_name>', methods=['GET'])
 @login_required
 def document_download(id, file_name):
     if current_user.role != 'doctor':
-        return redirect(url_for('index'))
+        return redirect(url_for('unorthorised'))
     file = file_name
     print(file)
     users = fetch_query('SELECT * FROM Users')
     return send_from_directory('uploads/{value}'.format(value=id), file, as_attachment=True)
 
-
+#reminders function
 @app.route('/api/mark_reminders_seen', methods=['POST'])
 def mark_reminders_seen():
     patient_id = request.json.get('patient_id')
@@ -511,9 +516,12 @@ def update_reminder_seen_status(patient_id):
     query = "UPDATE Reminders SET seen_in_ui = 1 WHERE patient_id = ? AND seen_in_ui = 0"
     execute_query(query, (patient_id,))
 
+#recetpionist confirm appointment function
 @app.route('/confirm_appointment', methods=['GET', 'POST'])
 @login_required
 def confirm_appointment():
+    if current_user.role != 'receptionist':
+        return redirect(url_for('unorthorised'))
     if request.method == 'POST':
         id = request.form['appointment_id']
         execute_query("UPDATE Appointments SET status = 'Confirmed' WHERE id = {value}".format(value=id))
@@ -522,14 +530,23 @@ def confirm_appointment():
     print('no')
     return redirect(url_for('index'))
 
+#receptionist deny appointment function
 @app.route('/deny_appointment', methods=['GET', 'POST'])
 @login_required
 def deny_appointment():
+    if current_user.role != 'receptionist':
+        return redirect(url_for('unorthorised'))
     if request.method == 'POST':
         id = request.form['appointment_id']
         execute_query('DELETE FROM Appointments WHERE id = {value}'.format(value=id))
         return redirect(url_for('index'))
     return redirect(url_for('index'))
+
+@app.route('/unorthorised', methods=['GET', 'POST'])
+@login_required
+def unorthorised():
+
+    return render_template('unorthorised.html')
 
 if __name__ == '__main__':
     init_scheduler(app)

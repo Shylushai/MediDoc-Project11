@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-{% if current_user.role == 'patient' or current_user.role == 'receptionist' %}
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -65,7 +64,4 @@
         </form>
     </div>
 </body>
-{% else %}
-<h1> Unauthorised </h1>
-{% endif %}
 </html>
