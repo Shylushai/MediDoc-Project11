@@ -26,7 +26,7 @@ def initialize_db():
     # Create Patients table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS Patients (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
         name TEXT NOT NULL,
         dob DATE NOT NULL,
         age INTEGER NOT NULL,

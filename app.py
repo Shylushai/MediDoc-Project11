@@ -177,7 +177,7 @@ def register():
         password = bcrypt.generate_password_hash(request.form['password']).decode('utf-8')
         role = request.form['role']
         try:
-            execute_query('INSERT INTO Users (username, password, role) VALUES (?, ?, ?)', (username, password, role))
+            id = execute_query('INSERT INTO Users (username, password, role) VALUES (?, ?, ?)', (username, password, role))
             if role == 'patient':
                 name = request.form.get('name')
                 dob = request.form.get('dob')
@@ -186,9 +186,9 @@ def register():
                 contact = request.form.get('contact')
                 email = request.form.get('email')
                 execute_query(
-                    '''INSERT INTO Patients (name, dob, age, gender, contact, email) 
-                       VALUES (?, ?, ?, ?, ?, ?)''',
-                    (name, dob, age, gender, contact, email)
+                    '''INSERT INTO Patients (id, name, dob, age, gender, contact, email) 
+                       VALUES (?,?, ?, ?, ?, ?, ?)''',
+                    (id, name, dob, age, gender, contact, email)
                 )
             flash('Registration successful, please log in.', 'success')
             return redirect(url_for('login'))
@@ -285,14 +285,13 @@ def delete_appointment(appointment_id):
 @login_required
 def book_appointment():
     if request.method == 'POST':
-        patient_id = current_user.id
         patient_name = request.form['patient_name']
-        contact = request.form['contact']
-        email = request.form['email']
         doctor_id = request.form['doctor']
         date = request.form['date']
         time = request.form['time']
         reason = request.form['reason'] if request.form['reason'] else 'No message provided'
+        patient = fetch_query('SELECT * FROM Patients WHERE name = ?', (patient_name,))
+        patient_id = patient[0]['id']
         execute_query(
             'INSERT INTO Appointments (patient_id, doctor_id, date, time, reason, status) VALUES (?, ?, ?, ?, ?, ?)',
             (patient_id, doctor_id, date, time, reason, 'Pending'))
@@ -550,4 +549,4 @@ def unorthorised():
 
 if __name__ == '__main__':
     init_scheduler(app)
-    app.run(debug=True, port=5001)
+    app.run(debug=False, port=5001)
