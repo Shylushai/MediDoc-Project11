@@ -122,14 +122,13 @@ def index():
             }
             upcoming_reminders.append(reminder_data)
     elif current_user.role == 'doctor':
-        appointments = fetch_query('''
+         appointments = fetch_query('''
             SELECT Appointments.id, Appointments.date, Appointments.time, Appointments.reason, Appointments.status,
                    Patients.name as patient_name, Patients.contact as patient_contact
             FROM Appointments
             JOIN Patients ON Appointments.patient_id = Patients.id
-            WHERE Appointments.doctor_id = ?
             ORDER BY Appointments.date, Appointments.time
-        ''', (current_user.id,))
+        ''')
     elif current_user.role == 'receptionist':
         doctors = fetch_query('SELECT * FROM Doctors')
         appointments = fetch_query('''

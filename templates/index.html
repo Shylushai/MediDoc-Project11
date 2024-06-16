@@ -70,6 +70,8 @@
               </div>
             {% endif %}
         </div>
+
+        <!-- NAvigation Bar -->
         <nav class="navigation">
             <ul>
                 {% if current_user.role == 'admin' %}
@@ -77,7 +79,6 @@
                     <li><a href="{{ url_for('user_management') }}">User Management</a></li>
                 {% elif current_user.role == 'patient' %}
                     <li><a href="{{ url_for('receptionist_book_appointment') }}">Book Appointment</a></li>
-                    <li><a href="{{ url_for('update_patient') }}">Update Information</a></li>
                 {% elif current_user.role == 'receptionist' %}
                     <li><a href="{{ url_for('receptionist_book_appointment') }}">Book Appointment</a></li>
                     <li><a href="{{ url_for('search_patient') }}">Search Patient</a></li>
@@ -88,6 +89,10 @@
             </ul>
         </nav>
     </header>
+
+
+    <!-- Body -->
+
     <div class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -98,6 +103,8 @@
                 </div>
             {% endif %}
         {% endwith %}
+
+
         {% if current_user.role == 'admin' %}
             <h2>Patients</h2>
             <ul>
@@ -112,8 +119,11 @@
                     </li>
                 {% endfor %}
             </ul>
-        {% endif %}
+
+
         <h2>Doctors</h2>
+
+
         <ul>
             {% for doctor in doctors %}
                 <li>
@@ -128,11 +138,12 @@
                 </li>
             {% endfor %}
         </ul>
-        <h2>Appointments</h2>
-        {% if current_user.role == 'patient' %}
-          {% for appointment in appointments %}
-          {% endfor %}
+        
         {% endif %}
+
+        <h2>Appointments</h2>
+
+
         <ul>
             {% for appointment in appointments %}
                 <li>
@@ -175,6 +186,11 @@
         </ul>
     </div>
 </body>
+
+
+
+
+
 {% if current_user.role == 'patient' %}
   <script>
     function updateNotificationBadge(reminderCount) {
