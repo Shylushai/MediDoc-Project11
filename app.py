@@ -361,21 +361,56 @@ def update_patient():
         return redirect(url_for('unorthorised'))
 
     if request.method == 'POST':
-        name = request.form['name']
-        age = request.form['age']
-        gender = request.form['gender']
+        # Patient information
+        patient_id = request.form['patient_id']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        email = request.form['email']
         contact = request.form['contact']
+        address = request.form['address']
+        dob = request.form['dob']
+        
+        # Emergency contact information
+        sub_first_name = request.form['sub_first_name']
+        sub_last_name = request.form['sub_last_name']
+        sub_relationship = request.form['sub_relationship']
+        sub_address = request.form['sub_address']
+        sub_email = request.form['sub_email']
+        sub_contact = request.form['sub_contact']
 
-        execute_query('UPDATE Patients SET name = ?, age = ?, gender = ?, contact = ? WHERE id = ?',
-                      (name, age, gender, contact, current_user.id))
+        execute_query(  """
+        UPDATE Patients
+        SET first_name = ?, last_name = ?, email = ?, contact = ?, address = ?, dob = ?
+        WHERE patient_id = ?
+        """,
+            (
+                first_name,
+                last_name,
+                email,
+                contact,
+                address,
+                dob,
+                patient_id,
+            ))
+        execute_query(
+            """
+        UPDATE EmergencyContact
+        SET first_name = ?, last_name = ?, email = ?, contact = ?, address = ?, relationship = ?
+        WHERE patient_id = ?
+        """,
+            (sub_first_name, sub_last_name, sub_email, sub_contact, sub_address, sub_relationship, patient_id),
+        )
         flash('Information updated successfully', 'success')
         return redirect(url_for('index'))
 
     patient = fetch_query('SELECT * FROM Patients WHERE user_id = ?', (current_user.id,))
     if patient:
         patient = patient[0]
+        print(patient)
+        emergency_contact = fetch_query('SELECT * FROM EmergencyContact WHERE patient_id = ?', (patient['patient_id'],))
+        emergency_contact = emergency_contact[0]
 
-    return render_template('update_patient.html', patient=patient)
+    return render_template('update_patient.html', patient=patient, emergency_contact=emergency_contact)
 
 #book appointment route and function
 @app.route('/receptionist_book_appointment', methods=['GET', 'POST'])

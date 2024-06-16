@@ -8,8 +8,12 @@
   </head>
   <body>
     <div class="container">
-      <h2>Update Information</h2>
+      <h2>Update Information - Patient</h2>
       <form method="post">
+        <div class="form-group" aria-hidden="true" aria-disabled="true">
+          <!-- <label for="patient_id">Patient ID</label> -->
+          <input type="hidden" id="patient_id" name="patient_id" value="{{ patient.patient_id }}" required readonly>
+        </div>
         <div class="form-group">
           <label for="first_name">First Name</label>
           <input type="text" id="first_name" name="first_name" value="{{ patient.first_name }}" required>
@@ -44,6 +48,33 @@
             <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
             <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
           </select>
+        </div>
+
+      <h2>Update Information - Emergency Contact</h2>
+
+        <div class="form-group">
+          <label for="sub_first_name">First Name</label>
+          <input type="text" id="sub_first_name" name="sub_first_name" value="{{ emergency_contact.first_name }}" required>
+        </div>
+        <div class="form-group">
+          <label for="sub_last_name">Last Name</label>
+          <input type="text" id="sub_last_name" name="sub_last_name" value="{{ emergency_contact.last_name }}" required>
+        </div>
+        <div class="form-group">
+          <label for="sub_relationship">Relationship</label>
+          <input type="text" id="sub_relationship" name="sub_relationship" value="{{ emergency_contact.relationship }}" required>
+        </div>
+        <div class="form-group">
+          <label for="sub_address">Address</label>
+          <input type="text" id="sub_address" name="sub_address" value="{{ emergency_contact.address }}" required>
+        </div>
+        <div class="form-group">
+          <label for="sub_email">Email</label>
+          <input type="email" id="sub_email" name="sub_email" value="{{ emergency_contact.email }}" required>
+        </div>
+        <div class="form-group">
+          <label for="sub_contact">Contact</label>
+          <input type="text" id="sub_contact" name="sub_contact" value="{{ emergency_contact.contact }}" required>
         </div>
         
         <div class="form-group">

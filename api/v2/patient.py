@@ -62,9 +62,17 @@ def patient_get_basic_info():
         SET first_name = ?, last_name = ?, email = ?, contact = ?, address = ?, dob = ?
         WHERE patient_id = ?
         """,
-            (first_name, last_name, email, contact, address, dob, patient_id),
+            (
+                first_name,
+                last_name,
+                email,
+                contact,
+                address,
+                dob,
+                patient_id,
+            ),
         )
-        
+
         cursor.execute(
             """
         UPDATE EmergencyContact
@@ -73,7 +81,7 @@ def patient_get_basic_info():
         """,
             (first_name, last_name, email, contact, address, patient_id),
         )
-        
+
         cn.commit()
         cn.close()
 
