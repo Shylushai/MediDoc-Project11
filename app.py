@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask import Flask, render_template, redirect, url_for, request, flash, session, jsonify
+from flask_cors import CORS
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 import sqlite3
 from flask_bcrypt import Bcrypt
@@ -9,15 +10,18 @@ import logging
 import os
 from io import BytesIO
 from flask import send_from_directory
-
+import api.v2.endpoint as api
 from scheduler import init_scheduler
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'your_secret_key'
+app.register_blueprint(api.endpoint_v2, url_prefix="/api/v2")
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 bcrypt = Bcrypt(app)
+logging.basicConfig(level=logging.DEBUG)
 
 
 # Database connection
@@ -46,6 +50,14 @@ class User(UserMixin):
         self.username = username
         self.password = password
         self.role = role
+        
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "password": "not shown",
+            "role": self.role,
+        }
 
 
 # Retry decorator for database operations
