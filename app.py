@@ -105,18 +105,18 @@ def index():
         doctors = fetch_query('SELECT * FROM Doctors')
         appointments = fetch_query('''
             SELECT Appointments.id, Appointments.date, Appointments.time, Appointments.reason, Appointments.status,
-                   Patients.name as patient_name, Patients.contact as patient_contact
+                   Patients.first_name as patient_name, Patients.contact as patient_contact
             FROM Appointments
-            JOIN Patients ON Appointments.patient_id = Patients.id
+            JOIN Patients ON Appointments.patient_id = Patients.patient_id
             ORDER BY Appointments.date, Appointments.time
         ''')
     elif current_user.role == 'patient':
         doctors = fetch_query('SELECT * FROM Doctors')
         appointments = fetch_query('''
             SELECT Appointments.id, Appointments.date, Appointments.time, Appointments.reason, Appointments.status,
-                   Patients.name as patient_name, Patients.contact as patient_contact
+                   Patients.first_name as patient_name, Patients.contact as patient_contact
             FROM Appointments
-            JOIN Patients ON Appointments.patient_id = Patients.id
+            JOIN Patients ON Appointments.patient_id = Patients.patient_id
             WHERE Appointments.patient_id = ?
             ORDER BY Appointments.date, Appointments.time
         ''', (current_user.id,))
@@ -136,9 +136,9 @@ def index():
     elif current_user.role == 'doctor':
         appointments = fetch_query('''
             SELECT Appointments.id, Appointments.date, Appointments.time, Appointments.reason, Appointments.status,
-                   Patients.name as patient_name, Patients.contact as patient_contact
+                   Patients.first_name as patient_name, Patients.contact as patient_contact
             FROM Appointments
-            JOIN Patients ON Appointments.patient_id = Patients.id
+            JOIN Patients ON Appointments.patient_id = Patients.patient_id
             WHERE Appointments.doctor_id = ?
             ORDER BY Appointments.date, Appointments.time
         ''', (current_user.id,))
@@ -146,9 +146,9 @@ def index():
         doctors = fetch_query('SELECT * FROM Doctors')
         appointments = fetch_query('''
             SELECT Appointments.id, Appointments.date, Appointments.time, Appointments.reason, Appointments.status,
-                   Patients.name as patient_name, Patients.contact as patient_contact
+                   Patients.first_name as patient_name, Patients.contact as patient_contact
             FROM Appointments
-            JOIN Patients ON Appointments.patient_id = Patients.id
+            JOIN Patients ON Appointments.patient_id = Patients.patient_id
             ORDER BY Appointments.date, Appointments.time
         ''')
 
