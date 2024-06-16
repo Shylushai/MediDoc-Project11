@@ -34,9 +34,9 @@
       <a>{{ patient.username }}</a>
       <form action="/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="file">
-        <input id="id" name="id" readonly value="{{ patient.id }}" style="visibility: hidden">
+        <input id="id" name="id" readonly value="{{ patient.patient_id }}" style="visibility: hidden">
         <input type="submit" value="Upload files" class="button">
-      </form><a href="/download/{{ patient.id }}" class="button">download files</a>
+      </form><a href="/download/{{ patient.patient_id }}" class="button">download files</a>
     </div>
     {% endfor %}
 
