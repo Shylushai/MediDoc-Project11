@@ -11,8 +11,28 @@
       <h2>Update Information</h2>
       <form method="post">
         <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" value="{{ patient.name }}" required>
+          <label for="first_name">First Name</label>
+          <input type="text" id="first_name" name="first_name" value="{{ patient.first_name }}" required>
+        </div>
+        <div class="form-group">
+          <label for="last_name">Last Name</label>
+          <input type="text" id="last_name" name="last_name" value="{{ patient.last_name }}" required>
+        </div>
+        <div class="form-group">
+          <label for="address">Address</label>
+          <input type="text" id="address" name="address" value="{{ patient.address }}" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="{{ patient.email }}" required>
+        </div>
+        <div class="form-group">
+          <label for="contact">Contact</label>
+          <input type="text" id="contact" name="contact" value="{{ patient.contact }}" required>
+        </div>
+        <div class="form-group">
+          <label for="dob">Date of Birth</label>
+          <input type="date" id="dob" name="dob" value="{{ patient.dob }}" required>
         </div>
         <div class="form-group">
           <label for="age">Age</label>
@@ -25,10 +45,7 @@
             <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
           </select>
         </div>
-        <div class="form-group">
-          <label for="contact">Contact</label>
-          <input type="text" id="contact" name="contact" value="{{ patient.contact }}" required>
-        </div>
+        
         <div class="form-group">
           <button type="submit" class="button">Update</button>
         </div>
