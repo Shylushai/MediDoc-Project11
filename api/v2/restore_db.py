@@ -72,6 +72,100 @@ def restore_db_post():
                 ),
             )
             print("loaded allergy data", record)
+    elif target == "Immunisation":
+        for record in data:
+            cursor.execute(
+                "INSERT INTO Immunisation (immunisation_id, patient_id, vaccine_name, vaccine_dose, vaccination_date, vaccination_location, vaccinator_name, vaccination_status, side_effects, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record["immunisation_id"],
+                    record["patient_id"],
+                    record["vaccine_name"],
+                    record["vaccine_dose"],
+                    record["vaccination_date"],
+                    record["vaccination_location"],
+                    record["vaccinator_name"],
+                    record["vaccination_status"],
+                    record["side_effects"],
+                    record["notes"],
+                ),
+            )
+            print("loaded immunisation data", record)
+    elif target == "Medicine":
+        for record in data:
+            cursor.execute(
+                "INSERT INTO Medicine (medicine_id, patient_id, diagnosis_code, diagnosis, prescription_date, medication_name, dosage_amount, dosage_unit, frequency, prescribing_doctor, start_date, end_date, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record["medicine_id"],
+                    record["patient_id"],
+                    record["diagnosis_code"],
+                    record["diagnosis"],
+                    record["prescription_date"],
+                    record["medication_name"],
+                    record["dosage_amount"],
+                    record["dosage_unit"],
+                    record["frequency"],
+                    record["prescribing_doctor"],
+                    record["start_date"],
+                    record["end_date"],
+                    record["notes"],
+                ),
+            )
+            print("loaded medicine data", record)
+    elif target == "TestResult":
+        for record in data:
+            cursor.execute(
+                "INSERT INTO TestResult (testresult_id, patient_id, test_name, test_date, result_value, unit, normal_range, doctor_name, hospital_name, lab_technician, comments, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record["testresult_id"],
+                    record["patient_id"],
+                    record["test_name"],
+                    record["test_date"],
+                    record["result_value"],
+                    record["unit"],
+                    record["normal_range"],
+                    record["doctor_name"],
+                    record["hospital_name"],
+                    record["lab_technician"],
+                    record["comments"],
+                    record["notes"],
+                ),
+            )
+            print("loaded test result data", record)
+    elif target == "EmergencyContact":
+        for record in data:
+            cursor.execute(
+                "INSERT INTO EmergencyContact (emergency_contact_id, patient_id, first_name, last_name, relationship, address, email, contact, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record["emergency_contact_id"],
+                    record["patient_id"],
+                    record["first_name"],
+                    record["last_name"],
+                    record["relationship"],
+                    record["address"],
+                    record["email"],
+                    record["contact"],
+                    record["notes"],
+                ),
+            )
+            print("loaded emergency contact data", record)
+    elif target == "Document":
+        for record in data:
+            cursor.execute(
+                "INSERT INTO Document (document_id, patient_id, document_title, document_type, document_format, document_url, creation_date, author_name, file_size, document_keywords) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record["document_id"],
+                    record["patient_id"],
+                    record["document_title"],
+                    record["document_type"],
+                    record["document_format"],
+                    record["document_url"],
+                    record["creation_date"],
+                    record["author_name"],
+                    record["file_size"],
+                    record["document_keywords"],
+                ),
+            )
+            print("loaded document data", record)
 
     cn.commit()
     cn.close()
