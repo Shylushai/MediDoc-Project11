@@ -1,0 +1,122 @@
+[
+  {
+    "doctor_id": 1,
+    "user_id": 1,
+    "first_name": "Tana",
+    "last_name": "Bane",
+    "specialty": "Plastic Surgery",
+    "contact": "2803173894",
+    "email": "tbane0@prweb.com",
+    "department_id": 1
+  },
+  {
+    "doctor_id": 2,
+    "user_id": 3,
+    "first_name": "Caterina",
+    "last_name": "Emerton",
+    "specialty": "Forensic Medicine",
+    "contact": "1621641647",
+    "email": "cemerton1@nytimes.com",
+    "department_id": 2
+  },
+  {
+    "doctor_id": 3,
+    "user_id": 4,
+    "first_name": "Nancee",
+    "last_name": "Tussaine",
+    "specialty": "Telemedicine",
+    "contact": "7354803929",
+    "email": "ntussaine2@google.cn",
+    "department_id": 1
+  },
+  {
+    "doctor_id": 4,
+    "user_id": 8,
+    "first_name": "Davon",
+    "last_name": "Crottagh",
+    "specialty": "Endocrinology",
+    "contact": "7608264354",
+    "email": "dcrottagh3@trellian.com",
+    "department_id": 3
+  },
+  {
+    "doctor_id": 5,
+    "user_id": 9,
+    "first_name": "Nisse",
+    "last_name": "Hucknall",
+    "specialty": "Neonatology",
+    "contact": "7468452438",
+    "email": "nhucknall4@telegraph.co.uk",
+    "department_id": 3
+  },
+  {
+    "doctor_id": 6,
+    "user_id": 11,
+    "first_name": "Lewes",
+    "last_name": "Kezor",
+    "specialty": "Sports Medicine",
+    "contact": "3046039788",
+    "email": "lkezor5@ning.com",
+    "department_id": 2
+  },
+  {
+    "doctor_id": 7,
+    "user_id": 12,
+    "first_name": "Sonnie",
+    "last_name": "Kyttor",
+    "specialty": "Integrative Medicine",
+    "contact": "2353215504",
+    "email": "skyttor6@illinois.edu",
+    "department_id": 3
+  },
+  {
+    "doctor_id": 8,
+    "user_id": 13,
+    "first_name": "Maryanne",
+    "last_name": "Eglington",
+    "specialty": "Cardiology",
+    "contact": "5746878220",
+    "email": "meglington7@meetup.com",
+    "department_id": 1
+  },
+  {
+    "doctor_id": 9,
+    "user_id": 15,
+    "first_name": "Stephenie",
+    "last_name": "Rosenqvist",
+    "specialty": "Reproductive Endocrinology",
+    "contact": "7109772910",
+    "email": "srosenqvist8@yale.edu",
+    "department_id": 2
+  },
+  {
+    "doctor_id": 10,
+    "user_id": 20,
+    "first_name": "Odell",
+    "last_name": "McNirlan",
+    "specialty": "Telemedicine",
+    "contact": "4514934745",
+    "email": "omcnirlan9@github.io",
+    "department_id": 2
+  },
+  {
+    "doctor_id": 11,
+    "user_id": 25,
+    "first_name": "Raleigh",
+    "last_name": "Holbie",
+    "specialty": "Allergy and Immunology",
+    "contact": "5607756916",
+    "email": "rholbiea@nba.com",
+    "department_id": 1
+  },
+  {
+    "doctor_id": 12,
+    "user_id": 29,
+    "first_name": "Ralgh",
+    "last_name": "Hoi",
+    "specialty": "Allergy and Immunology",
+    "contact": "5607722256916",
+    "email": "rholbie335a@nba.com",
+    "department_id": 1
+  }
+]

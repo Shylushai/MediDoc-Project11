@@ -166,6 +166,22 @@ def restore_db_post():
                 ),
             )
             print("loaded document data", record)
+    elif target == "Doctors":
+        for record in data:
+            cursor.execute(
+                "INSERT INTO Doctors (doctor_id, user_id, first_name, last_name, specialty, contact, email, department_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    record["doctor_id"],
+                    record["user_id"],
+                    record["first_name"],
+                    record["last_name"],
+                    record["specialty"],
+                    record["contact"],
+                    record["email"],
+                    record["department_id"],
+                ),
+            )
+            print("loaded doctor data", record)
 
     cn.commit()
     cn.close()
