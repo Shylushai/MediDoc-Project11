@@ -62,7 +62,7 @@
         <select id="doctor" name="doctor" required>
           <option value="">Select Doctor</option>
           {% for doctor in doctors %}
-            <option value="{{ doctor.id }}" data-department="{{ doctor.department_id }}">{{ doctor.name }}</option>
+            <option value="{{ doctor.doctor_id }}" data-department="{{ doctor.department_id }}">{{ doctor.name }}</option>
           {% endfor %}
         </select>
 

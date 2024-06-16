@@ -103,7 +103,7 @@
             <ul>
                 {% for patient in patients %}
                     <li>
-                        {{ patient.name }} (DOB: {{ patient.dob }}, {{ patient.age }} years old, {{ patient.gender }}) - {{ patient.contact }}
+                        {{ patient.first_name + " " + patient.last_name }} (DOB: {{ patient.dob }}, {{ patient.age }} years old, {{ patient.gender }}) - Contact: {{ patient.contact }}
                         <div class="button-group">
                             <form action="{{ url_for('delete_patient', patient_id=patient.patient_id) }}" method="post">
                                 <button type="submit" class="button delete">Delete</button>
@@ -117,10 +117,10 @@
         <ul>
             {% for doctor in doctors %}
                 <li>
-                    {{ doctor.name }} ({{ doctor.specialty }}) - {{ doctor.contact }}
+                    {{ doctor.first_name + " " + doctor.last_name }} ({{ doctor.specialty }}) - Staff ID: {{ doctor.user_id }} - Contact: {{ doctor.contact }}
                     {% if current_user.role == 'admin' %}
                         <div class="button-group">
-                            <form action="{{ url_for('delete_doctor', doctor_id=doctor.id) }}" method="post">
+                            <form action="{{ url_for('delete_doctor', doctor_id=doctor.doctor_id) }}" method="post">
                                 <button type="submit" class="button delete">Delete</button>
                             </form>
                         </div>
