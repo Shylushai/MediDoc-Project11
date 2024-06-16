@@ -271,7 +271,7 @@ def admin_setup():
 def delete_patient(patient_id):
     if current_user.role != 'admin':
         return redirect(url_for('unorthorised'))
-    execute_query('DELETE FROM Patients WHERE id = ?', (patient_id,))
+    execute_query('DELETE FROM Patients WHERE patient_id = ?', (patient_id,))
     return redirect(url_for('index'))
 
 #delte doctor function
@@ -280,7 +280,7 @@ def delete_patient(patient_id):
 def delete_doctor(doctor_id):
     if current_user.role != 'admin':
         return redirect(url_for('unorthorised'))
-    execute_query('DELETE FROM Doctors WHERE id = ?', (doctor_id,))
+    execute_query('DELETE FROM Doctors WHERE doctor_id = ?', (doctor_id,))
     return redirect(url_for('index'))
 
 #delete appointment function
