@@ -1,4 +1,3 @@
-from lib2to3.pytree import convert
 from flask_login import login_user
 from flask import Blueprint, json, request, jsonify
 from utils.general import convert_records_to_dicts, convert_single_record_to_dict, init_db_connection
