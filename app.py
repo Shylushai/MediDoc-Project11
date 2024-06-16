@@ -371,7 +371,7 @@ def update_patient():
         flash('Information updated successfully', 'success')
         return redirect(url_for('index'))
 
-    patient = fetch_query('SELECT * FROM Patients WHERE id = ?', (current_user.id,))
+    patient = fetch_query('SELECT * FROM Patients WHERE user_id = ?', (current_user.id,))
     if patient:
         patient = patient[0]
 
