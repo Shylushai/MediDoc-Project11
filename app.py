@@ -437,6 +437,8 @@ def clear_search_history():
 @app.route('/doctor_patient_search', methods=['GET', 'POST'])
 @login_required
 def doctor_patient_search():
+    if current_user.role != 'doctor':
+        return redirect(url_for('unorthorised'))
     users = fetch_query('SELECT * FROM Users')
     patients = fetch_query('SELECT * FROM Users WHERE role = \'patient\'')
     return render_template('Doctor_patient_search.html', users=users, patients=patients)
