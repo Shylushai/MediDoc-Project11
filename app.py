@@ -450,6 +450,14 @@ def doctor_search():
     patients = fetch_query('SELECT * FROM Users WHERE role = \'patient\' AND username LIKE ?', ('%' + name + '%',))
     return render_template('Doctor_patient_search.html', users=users, patients=patients)
 
+#Admin search function
+@app.route('/admin_search', methods=['GET', 'POST'])
+@login_required
+def admin_search():
+    name = request.form['searchName']
+    users = fetch_query('SELECT * FROM Users WHERE username LIKE ?', ('%' + name + '%',))
+    return render_template('user_management.html', users=users)
+
 #upload route
 @app.route('/upload', methods=['POST'])
 def upload():
