@@ -24,6 +24,7 @@ import React from "react";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import MuiDrawer from "@mui/material/Drawer";
 import AssignmentIcon from "@mui/icons-material/Assignment";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const drawerWidth: number = 240;
 
@@ -116,7 +117,7 @@ export default function PatientRoot({
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Home
+             
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">
@@ -151,7 +152,7 @@ export default function PatientRoot({
             <Divider sx={{ my: 1 }} />
             <ListItemButton onClick={onLogout}>
               <ListItemIcon>
-                <AssignmentIcon />
+                <LogoutIcon />
               </ListItemIcon>
               <ListItemText primary="Log Out" />
             </ListItemButton>

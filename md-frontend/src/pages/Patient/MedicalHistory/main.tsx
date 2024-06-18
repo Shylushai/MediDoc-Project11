@@ -1,216 +1,47 @@
-import { Box, Card, CardContent } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Card,
+  CardContent,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
 import api from "../../../api";
+import Menu from "@mui/icons-material/Menu";
 
-const mockData = [
-  {
-    type: "Allergy",
-    name: "Peanuts",
-    reaction: "Anaphylaxis",
-    date: "2021-10-10",
-  },
-  {
-    type: "Allergy",
-    name: "Shellfish",
-    reaction: "Hives",
-    date: "2021-09-09",
-  },
-  {
-    type: "Allergy",
-    name: "Milk",
-    reaction: "Wheezing",
-    date: "2021-08-08",
-  },
-  {
-    type: "Allergy",
-    name: "Eggs",
-    reaction: "Rash",
-    date: "2021-07-07",
-  },
-  {
-    type: "Allergy",
-    name: "Soy",
-    reaction: "Itching",
-    date: "2021-06-06",
-  },
-  {
-    type: "Immunisation",
-    name: "MMR",
-    date: "2021-01-01",
-  },
-  {
-    type: "Immunisation",
-    name: "Hepatitis B",
-    date: "2021-02-02",
-  },
-  {
-    type: "Immunisation",
-    name: "Influenza",
-    date: "2021-03-03",
-  },
-  {
-    type: "Immunisation",
-    name: "Chickenpox",
-    date: "2021-04-04",
-  },
-  {
-    type: "Immunisation",
-    name: "Polio",
-    date: "2021-05-05",
-  },
-  {
-    type: "Document",
-    name: "Medical Report",
-    date: "2021-02-02",
-  },
-  {
-    type: "Document",
-    name: "Prescription",
-    date: "2021-03-03",
-  },
-  {
-    type: "Document",
-    name: "Discharge Summary",
-    date: "2021-04-04",
-  },
-  {
-    type: "Document",
-    name: "Test Report",
-    date: "2021-05-05",
-  },
-  {
-    type: "Document",
-    name: "Insurance Claim",
-    date: "2021-06-06",
-  },
-  {
-    type: "Test Result",
-    name: "Blood Test",
-    result: "Normal",
-    date: "2021-03-03",
-  },
-  {
-    type: "Test Result",
-    name: "Urine Test",
-    result: "Normal",
-    date: "2021-04-04",
-  },
-  {
-    type: "Test Result",
-    name: "MRI Scan",
-    result: "Normal",
-    date: "2021-05-05",
-  },
-  {
-    type: "Test Result",
-    name: "X-Ray",
-    result: "Normal",
-    date: "2021-06-06",
-  },
-  {
-    type: "Test Result",
-    name: "ECG",
-    result: "Normal",
-    date: "2021-07-07",
-  },
-  {
-    type: "Medicine",
-    name: "Paracetamol",
-    dosage: "500mg",
-    frequency: "Twice a day",
-    date: "2021-04-04",
-  },
-  {
-    type: "Medicine",
-    name: "Ibuprofen",
-    dosage: "200mg",
-    frequency: "Once a day",
-    date: "2021-05-05",
-  },
-  {
-    type: "Medicine",
-    name: "Amoxicillin",
-    dosage: "250mg",
-    frequency: "Three times a day",
-    date: "2021-06-06",
-  },
-  {
-    type: "Medicine",
-    name: "Cetirizine",
-    dosage: "10mg",
-    frequency: "Once a day",
-    date: "2021-07-07",
-  },
-  {
-    type: "Medicine",
-    name: "Diazepam",
-    dosage: "5mg",
-    frequency: "As needed",
-    date: "2021-08-08",
-  },
-  {
-    type: "Scan",
-    name: "MRI",
-    result: "Normal",
-    date: "2021-05-05",
-  },
-  {
-    type: "Scan",
-    name: "CT",
-    result: "Normal",
-    date: "2021-06-06",
-  },
-  {
-    type: "Scan",
-    name: "X-Ray",
-    result: "Normal",
-    date: "2021-07-07",
-  },
-  {
-    type: "Scan",
-    name: "Ultrasound",
-    result: "Normal",
-    date: "2021-08-08",
-  },
-  {
-    type: "Scan",
-    name: "PET",
-    result: "Normal",
-    date: "2021-09-09",
-  },
-  {
-    type: "Hospital Visit",
-    reason: "Checkup",
-    date: "2021-06-06",
-  },
-  {
-    type: "Hospital Visit",
-    reason: "Surgery",
-    date: "2021-07-07",
-  },
-  {
-    type: "Hospital Visit",
-    reason: "Emergency",
-    date: "2021-08-08",
-  },
-  {
-    type: "Hospital Visit",
-    reason: "Follow-up",
-    date: "2021-09-09",
-  },
-  {
-    type: "Hospital Visit",
-    reason: "Consultation",
-    date: "2021-10-10",
-  },
-];
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
 
 export default function MedicalHistory({ user }) {
   const [data, setData] = useState([]);
   const [dataList, setDataList] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [filterType, setFilterType] = useState("");
+  const filterOptions = [
+    { value: "allergy", label: "Allergy" },
+    { value: "immunisation", label: "Immunisation" },
+    { value: "medicine", label: "Medicine" },
+    { value: "testresult", label: "Test Results" },
+    { value: "document", label: "Document" },
+    { value: "", label: "None" },
+  ];
+  const cardTypeLabelMap = new Map();
+  cardTypeLabelMap.set("allergy", "Allergy");
+  cardTypeLabelMap.set("immunisation", "Immunisation");
+  cardTypeLabelMap.set("medicine", "Medicine");
+  cardTypeLabelMap.set("testresult", "Test Results");
+  cardTypeLabelMap.set("document", "Document");
+  cardTypeLabelMap.set("", "None");
+
+  const handleFilterChange = (event) => {
+    setFilterType(event.target.value);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -245,9 +76,54 @@ export default function MedicalHistory({ user }) {
     <Box sx={{ display: "flex", width: "100%" }}>
       <Box sx={{ flexGrow: 1 }}>
         <h1>Medical History</h1>
-        <p>Filtered By: None</p>
+        <FormControl sx={{ width: "10rem" }}>
+          <InputLabel id="filter-select-label">Filter By Type</InputLabel>
+          <Select
+            labelId="filter-select-label"
+            value={filterType}
+            label="Filter By Type"
+            onChange={handleFilterChange}
+            defaultValue=""
+          >
+            {filterOptions.map((option) => (
+              <MenuItem value={option.value}>{option.label}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <p>Current Year: {new Date().getFullYear()}</p>
-        {dataList?.map((item, index) => (
+        {(filterType
+          ? dataList?.filter((item) => item.type === filterType)
+          : dataList
+        )?.map((item, index) => (
+          <>
+            <Card
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginY: "1rem",
+                width: "100%",
+              }}
+              key={"index" + "card-type-records-" + index}
+            >
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <CardContent>
+                  <h2>{cardTypeLabelMap.get(item.type)}</h2>
+                  {Object.entries(item).map(([key, value]) => (
+                    <p key={key}>
+                      {capitalizeFirstLetter(key.replace(/_/g, " "))}: {value}
+                    </p>
+                  ))}
+                </CardContent>
+              </Box>
+              <Box sx={{ display: "flex", flexDirection: "column" }}>
+                <CardContent>
+                  <p>{item.date}</p>
+                </CardContent>
+              </Box>
+            </Card>
+          </>
+        ))}
+        {/* {dataList?.map((item, index) => (
           <Card
             sx={{
               display: "flex",
@@ -255,21 +131,16 @@ export default function MedicalHistory({ user }) {
               marginY: "1rem",
               width: "100%",
             }}
+            key={"index" + "card-type-records-" + index}
           >
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <CardContent>
-                <h2>{item.type}</h2>
-                <p>{item.name}</p>
-                <p>{item.allergy_name}</p>
-                <p>{item.medicine_name}</p>
-                <p>{item.immunisation_name}</p>
-                <p>{item.document_name}</p>
-                <p>{item.testresult_name}</p>
-                <p>{item.reaction}</p>
-                <p>{item.reason}</p>
-                <p>{item.result}</p>
-                <p>{item.dosage}</p>
-                <p>{item.frequency}</p>
+                <h2>{cardTypeLabelMap.get(item.type)}</h2>
+                {Object.entries(item).map(([key, value]) => (
+                  <p key={key}>
+                    {capitalizeFirstLetter(key.replace(/_/g, " "))}: {value}
+                  </p>
+                ))}
               </CardContent>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column" }}>
@@ -278,7 +149,7 @@ export default function MedicalHistory({ user }) {
               </CardContent>
             </Box>
           </Card>
-        ))}
+        ))} */}
       </Box>
     </Box>
   );

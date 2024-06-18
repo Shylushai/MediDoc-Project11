@@ -292,11 +292,11 @@ export default function Account({ user }) {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
-      <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{width: "100%" }}>
+      <Box sx={{  }}>
         <h1>My Profile</h1>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <Paper elevation={3} sx={{ padding: 4 }}>
+          <Paper elevation={3} sx={{ padding: 4, marginRight: 8 }}>
             <Grid container spacing={3}>
               {FormFields}
 
